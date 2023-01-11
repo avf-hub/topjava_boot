@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.javaops.topjava.error.AppException;
+import ru.javaops.topjava.error.DataConflictException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,11 +39,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, body, headers, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
+    @ExceptionHandler(DataConflictException.class)
+    public ResponseEntity<?> dataConflictException(DataConflictException ex, WebRequest request) {
+        log.error("DataConflictException: {}", ex.getMessage());
+        return createProblemDetailExceptionResponse(ex, HttpStatus.CONFLICT, request);
+    }
+
     @ExceptionHandler(AppException.class)
     public ResponseEntity<?> appException(AppException ex, WebRequest request) {
         log.error("ApplicationException: {}", ex.getMessage());
-        ProblemDetail body = createProblemDetail(ex, ex.getStatusCode(), ex.getMessage(), null, null, request);
-        return handleExceptionInternal(ex, body, new HttpHeaders(), ex.getStatusCode(), request);
+        return createProblemDetailExceptionResponse(ex, ex.getStatusCode(), request);
+    }
+
+    private ResponseEntity<?> createProblemDetailExceptionResponse(Exception ex, HttpStatusCode statusCode, WebRequest request) {
+        ProblemDetail body = createProblemDetail(ex, statusCode, ex.getMessage(), null, null, request);
+        return handleExceptionInternal(ex, body, new HttpHeaders(), statusCode, request);
     }
 
     private String getErrorMessage(ObjectError error) {

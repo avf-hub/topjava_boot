@@ -36,6 +36,11 @@ public abstract class AbstractUserController {
         repository.deleteExisted(id);
     }
 
+    public ResponseEntity<User> getWithMeals(int id) {
+        log.info("getWithMeals {}", id);
+        return ResponseEntity.of(repository.getWithMeals(id));
+    }
+
     protected User prepareAndSave(User user) {
         return repository.save(UsersUtil.prepareToSave(user));
     }
