@@ -24,8 +24,8 @@ public interface MealRepository extends BaseRepository<Meal> {
     @Query("SELECT m FROM Meal m JOIN FETCH m.user WHERE m.id = :id and m.user.id = :userId")
     Optional<Meal> getWithUser(int id, int userId);
 
-    default Meal checkBelong(int id, int userId) {
+    default Meal getExistedOrBelonged(int id, int userId) {
         return get(id, userId).orElseThrow(
-                () -> new DataConflictException("Meal id=" + id + " doesn't belong to User id=" + userId));
+                () -> new DataConflictException("Meal id=" + id + "   is not exist or doesn't belong to User id=" + userId));
     }
 }

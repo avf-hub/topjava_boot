@@ -16,7 +16,7 @@ public class SecurityUtil {
             return null;
         }
         Object principal = auth.getPrincipal();
-        return (principal instanceof AuthUser) ? (AuthUser) principal : null;
+        return (principal instanceof AuthUser au) ? au : null;
     }
 
     public static AuthUser get() {

@@ -18,7 +18,6 @@ import ru.javaops.topjava.web.user.UserTestData;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -167,27 +166,23 @@ class MealControllerTest extends AbstractControllerTest {
     @Test
     @Transactional(propagation = Propagation.NEVER)
     @WithUserDetails(value = USER_MAIL)
-    void updateDuplicate() {
+    void updateDuplicate() throws Exception {
         Meal invalid = new Meal(MEAL1_ID, meal2.getDateTime(), "Dummy", 200);
-        assertThrows(Exception.class, () ->
-                perform(MockMvcRequestBuilders.put(REST_URL_SLASH + MEAL1_ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.writeValue(invalid)))
-                        .andDo(print())
-        );
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    @Transactional(propagation = Propagation.NEVER)
     @WithUserDetails(value = ADMIN_MAIL)
-    void createDuplicate() {
+    void createDuplicate() throws Exception {
         Meal invalid = new Meal(null, adminMeal1.getDateTime(), "Dummy", 200);
-        assertThrows(Exception.class, () ->
-                perform(MockMvcRequestBuilders.post(REST_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.writeValue(invalid)))
-                        .andDo(print())
-                        .andExpect(status().isUnprocessableEntity())
-        );
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 }

@@ -48,7 +48,7 @@ public class MealController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@AuthenticationPrincipal AuthUser authUser, @PathVariable int id) {
         log.info("delete {} for user {}", id, authUser.id());
-        Meal meal = repository.checkBelong(id, authUser.id());
+        Meal meal = repository.getExistedOrBelonged(id, authUser.id());
         repository.delete(meal);
     }
 
@@ -65,7 +65,7 @@ public class MealController {
         int userId = authUser.id();
         log.info("update {} for user {}", meal, userId);
         assureIdConsistent(meal, id);
-        repository.checkBelong(id, userId);
+        repository.getExistedOrBelonged(id, userId);
         service.save(meal, userId);
     }
 

@@ -1,18 +1,12 @@
 package ru.javaops.topjava.error;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.lang.NonNull;
 
 @Getter
-public class AppException extends ResponseStatusException {
+public class AppException extends RuntimeException {
 
-    public AppException(HttpStatus status, String message) {
-        super(status, message);
-    }
-
-    @Override
-    public String getMessage() {
-        return getReason();
+    public AppException(@NonNull String message) {
+        super(message);
     }
 }
